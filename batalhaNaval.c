@@ -3,62 +3,95 @@
 #define TAMANHO 10
 #define NAVIO 3
 
-void inicializarTabuleiro(int tabuleiro[TAMANHO][TAMANHO]) {
-    int i = 0, j;
-    while (i < TAMANHO) {
-        j = 0;
-        while (j < TAMANHO) {
-            tabuleiro[i][j] = 0;
-            j++;
-        }
-        i++;
-    }
-}
+// Declaração dos protótipos das funções
+int inicializarTabuleiro(int tabuleiro[TAMANHO][TAMANHO]);
+int exibirTabuleiro(int tabuleiro[TAMANHO][TAMANHO]);
+int aplicarHabilidade(int tabuleiro[TAMANHO][TAMANHO], int habilidade[5][5], int origemX, int origemY);
 
-void posicionarNavio(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna, int horizontal) {
-    int i = 0;
-    while (i < NAVIO) {
-        if (horizontal) {
-            tabuleiro[linha][coluna + i] = NAVIO;
-        } else {
-            tabuleiro[linha + i][coluna] = NAVIO;
-        }
-        i++;
-    }
-}
+// Matriz Cone (5x5)
+int cone[5][5] = {
+    {0, 0, 1, 0, 0},
+    {0, 1, 1, 1, 0},
+    {1, 1, 1, 1, 1},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0}
+};
 
-void imprimirTabuleiro(int tabuleiro[TAMANHO][TAMANHO]) {
-    int i = 0, j;
-    while (i < TAMANHO) {
-        j = 0;
-        while (j < TAMANHO) {
-            printf("%d ", tabuleiro[i][j]);
-            j++;
-        }
-        printf("\n");
-        i++;
-    }
-}
+// Matriz Cruz (5x5)
+int cruz[5][5] = {
+    {0, 0, 1, 0, 0},
+    {0, 0, 1, 0, 0},
+    {1, 1, 1, 1, 1},
+    {0, 0, 1, 0, 0},
+    {0, 0, 1, 0, 0}
+};
+
+// Matriz Octaedro (5x5)
+int octaedro[5][5] = {
+    {0, 0, 1, 0, 0},
+    {0, 1, 1, 1, 0},
+    {1, 1, 1, 1, 1},
+    {0, 1, 1, 1, 0},
+    {0, 0, 1, 0, 0}
+};
 
 int main() {
     int tabuleiro[TAMANHO][TAMANHO];
-    char resposta[10];
-    int linhaNavio1 = 2, colunaNavio1 = 3;
-    int linhaNavio2 = 5, colunaNavio2 = 6;
+    inicializarTabuleiro(tabuleiro);
+    
+    printf("Tabuleiro inicial:\n");
+    exibirTabuleiro(tabuleiro);
+    
+    // Aplicando habilidades
+    aplicarHabilidade(tabuleiro, cone, 4, 4);
+    printf("\nTabuleiro com habilidade Cone:\n");
+    exibirTabuleiro(tabuleiro);
     
     inicializarTabuleiro(tabuleiro);
-    posicionarNavio(tabuleiro, linhaNavio1, colunaNavio1, 1);
-    posicionarNavio(tabuleiro, linhaNavio2, colunaNavio2, 0);
+    aplicarHabilidade(tabuleiro, cruz, 4, 4);
+    printf("\nTabuleiro com habilidade Cruz:\n");
+    exibirTabuleiro(tabuleiro);
     
-    while (1) {
-        imprimirTabuleiro(tabuleiro);
-        printf("\nDigite 'sim' para sair ou qualquer tecla para continuar: ");
-        scanf("%s", resposta);
-        if (strcmp(resposta, "sim") == 0) {
-            printf("\nSaindo do programa...\n");
-            break;
+    inicializarTabuleiro(tabuleiro);
+    aplicarHabilidade(tabuleiro, octaedro, 4, 4);
+    printf("\nTabuleiro com habilidade Octaedro:\n");
+    exibirTabuleiro(tabuleiro);
+    
+    return 0;
+}
+
+// Função para inicializar o tabuleiro com água (0) e um navio (3) em uma posição fixa
+int inicializarTabuleiro(int tabuleiro[TAMANHO][TAMANHO]) {
+    for (int i = 0; i < TAMANHO; i++) {
+        for (int j = 0; j < TAMANHO; j++) {
+            tabuleiro[i][j] = 0;
         }
     }
-    
+    tabuleiro[4][4] = 3; // Exemplo de navio
+    return 0;
+}
+
+// Função para exibir o tabuleiro
+int exibirTabuleiro(int tabuleiro[TAMANHO][TAMANHO]) {
+    for (int i = 0; i < TAMANHO; i++) {
+        for (int j = 0; j < TAMANHO; j++) {
+            printf("%d ", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+
+// Função para aplicar uma matriz de habilidade ao tabuleiro
+int aplicarHabilidade(int tabuleiro[TAMANHO][TAMANHO], int habilidade[5][5], int origemX, int origemY) {
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            int x = origemX + i - 2;
+            int y = origemY + j - 2;
+            if (x >= 0 && x < TAMANHO && y >= 0 && y < TAMANHO && habilidade[i][j] == 1) {
+                tabuleiro[x][y] = 5;
+            }
+        }
+    }
     return 0;
 }
